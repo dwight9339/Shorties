@@ -1,0 +1,60 @@
+
+<div role="alert" aria-live="assertive" aria-atomic="true" class="urlCreatedToast" data-autohide="false">
+    <div class="toast-header">
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="urlCreatedToast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">
+      Short URL creation success!
+    </div>
+</div>
+<div class="card mt-2">
+    <h3 class="card-header bg-dark" style="color: white">Create a New Short Url</h3>
+    <div class="card-body">
+        <form>
+            <div class="form-group">
+                <label for="url">Url:</label>
+                <input class="form-control" type="text" name="url" id="url"/>
+            </div>
+            <div class="form-group">
+                <label for="code">Custom Code (Optional):</label>
+                <input class="form-control" type="text" name="code" id="code"/>
+            </div>
+            <button type="submit" class="btn btn-dark">Create short url</button>
+        </form>
+    </div>
+</div>
+<script>
+    const form = document.querySelector("form");
+
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const url = formData.get("url");
+        const code = formData.get("code");
+
+        fetch("/newurl", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ url, code })
+        })
+        .then(res => {
+            if (res.ok){
+                form.reset();
+                res.text().then(html => {
+                    console.log(html);
+                    let newLi = document.createElement("li");
+
+                    newLi.innerHTML = html;
+                    document.getElementById("urlList").append(newLi);
+                    setButtonAction();
+                    $(".urlCreatedToast").toast("show");
+                });
+            }
+        });
+    });
+</script>

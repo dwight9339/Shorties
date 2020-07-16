@@ -1,0 +1,19 @@
+<li id="<%= url.code %>-li">
+    <div class="url card border-dark mb-3">
+        <div class="container">
+            <div class="row justify-content-md-center">
+                <div class="col-10">
+                    <p class="card-text m-3">
+                        Short: https://shorties.com/go/<%= url.code %><br />
+                        Original: <%= url.url %>
+                    </p>
+                </div>
+                <div class="col-2 align-self-end">
+                    <button data-code="<%= url.code %>" class="deleteUrl btn btn-danger btn-sm mb-2">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>

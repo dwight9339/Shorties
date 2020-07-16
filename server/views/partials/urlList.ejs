@@ -1,0 +1,37 @@
+<div class="card">
+    <h3 class="card-header bg-dark mt-2" style="color: white">Your URLs:</h3>
+    <div class="card-body">
+        <ul id="urlList" class="list-unstyled">
+            <% for (let url of urls) { %>
+                <li id="<%= url.code %>">
+                    <%- include("../partials/urlCard", {url}); %>
+                </li>
+            <% } %>
+        </ul>
+    </div>
+</div>
+<script>
+    /* let btns = document.getElementsByClassName("deleteUrl");
+
+    btns.forEach(btn => {
+        let code = btn.getAttribute("data-code");
+
+        btn.addEventListener("click", async event => {
+            fetch("/deleteurl", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ url, code })
+            }).then(res => {
+                if (res.ok) {
+                    let li = document.getElementById(code + "-li");
+
+                    li.parentElement.removeChild(li);
+                }
+            });
+        });
+    }); */
+    setButtonAction();
+</script>
