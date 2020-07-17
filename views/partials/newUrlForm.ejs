@@ -1,14 +1,4 @@
 
-<div role="alert" aria-live="assertive" aria-atomic="true" class="urlCreatedToast" data-autohide="false">
-    <div class="toast-header">
-      <button type="button" class="ml-2 mb-1 close" data-dismiss="urlCreatedToast" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="toast-body">
-      Short URL creation success!
-    </div>
-</div>
 <div class="card mt-2">
     <h3 class="card-header bg-dark" style="color: white">Create a New Short Url</h3>
     <div class="card-body">
@@ -46,7 +36,6 @@
             if (res.ok){
                 form.reset();
                 res.text().then(html => {
-                    console.log(html);
                     let newLi = document.createElement("li");
 
                     newLi.innerHTML = html;

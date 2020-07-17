@@ -12,18 +12,17 @@ module.exports = (app, db) => {
     const urls = db.get("urls");
     urls.createIndex({code: 1}, {unique: true});
 
-    app.get("/go/:code", async (req, res) => {
+    app.get("/go/:code", async (req, res, next) => {
         const { code } = req.params;
-        console.log(code);
     
         try {
             const url = await urls.findOne({ code });
             if (url) {
-                res.redirect(url.url);
+                return res.redirect(url.url);
             }
-            res.redirect("/?error=Not found");
+            return res.redirect("/?error=Not found");
         } catch(error) {
-            res.redirect("/?error=Not found");
+            next(error);
         }
     });
     
