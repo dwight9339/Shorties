@@ -3,6 +3,7 @@ module.exports = (app, db) => {
     const urls = db.get("urls");
 
     app.get("/", async (req, res, next) => {
+        console.log("Authenticated?: " + req.isAuthenticated());
         if (req.isAuthenticated()) {
             try {
                 let userUrls = await urls.find({ userId: req.userContext.userinfo.sub });
