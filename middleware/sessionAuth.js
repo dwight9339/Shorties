@@ -7,7 +7,7 @@ module.exports = app => {
         client_secret: process.env.OKTA_CLIENT_SECRET,
         issuer: `${process.env.OKTA_ORG_URL}/oauth2/default`,
         redirect_uri: `${process.env.HOST_URL}/authorization-code/callback`,
-        scopr: "openid profile"
+        scope: "openid profile"
     });
 
     app.use(session({
