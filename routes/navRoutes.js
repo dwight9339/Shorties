@@ -7,9 +7,11 @@ module.exports = (app, db) => {
         if (req.isAuthenticated()) {
             try {
                 let userUrls = await urls.find({ userId: req.userContext.userinfo.sub });
+                console.log(userUrls);
                 return res.render("pages/dashboard", {userAuthenticated: true, urls: userUrls});
             } catch (error) {
-                next(error);
+                console.log("Could not fetch urls");
+                res.send({message: "Unable to get user data"});
             }
         }
 
