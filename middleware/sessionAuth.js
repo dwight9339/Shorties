@@ -1,5 +1,5 @@
 const { ExpressOIDC } = require("@okta/oidc-middleware");
-const session = require("express-session");
+const session = require("cookie-session");
 
 module.exports = app => {
     const oidc = new ExpressOIDC({
@@ -11,9 +11,8 @@ module.exports = app => {
     });
 
     app.use(session({
-        resave: true,
-        saveUninitialized: false,
-        secret: process.env.SESSION_SECRET
+        secret: process.env.SESSION_SECRET,
+        maxAge: 1000*60*60*24
     }));
     app.use(oidc.router);
     app.locals.oidc = oidc;
