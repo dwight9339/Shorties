@@ -6,13 +6,29 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const yup = require("yup");
 const monk = require("monk");
+const redis = require("redis");
 const { nanoid } = require("nanoid");
 const PORT = process.env.PORT || 5000;
 
 const app = express();
 
 const db = monk(process.env.MONGO_URI);
+const code_cache = redis.createClient(process.env.REDIS_CODE_URL);
+const recent_cache = redis.createClient(process.env.REDIS_RECENT_URL);
 
+code_cache.on("ready", err => {
+    if (err) console.log(err);
+
+    console.log("Code cache ready");
+    code_cache.flushdb();
+});
+
+recent_cache.on("ready", err => {
+    if (err) console.log(err);
+
+    console.log("Recent cache ready");
+    recent_cache.flushdb();
+});
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -36,8 +52,8 @@ app.use((error, req, res, next) => {
 require("./middleware/sessionAuth")(app);
 
 // Bring in routes
-require("./routes/urlRoutes")(app, db);
-require("./routes/navRoutes")(app, db);
+require("./routes/urlRoutes")(app, db, code_cache, recent_cache);
+require("./routes/navRoutes")(app, db, code_cache, recent_cache);
 
 app.listen(PORT, () => {
     console.log("Listening at port " + PORT);

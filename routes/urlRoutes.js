@@ -1,5 +1,7 @@
 const { nanoid } = require("nanoid");
+const { promisify } = require("util");
 const yup = require("yup");
+const redis = require("redis");
 
 const schema = yup.object().shape({
     code: yup.string().trim().matches(/[\w\-]/i),
@@ -7,20 +9,38 @@ const schema = yup.object().shape({
     userId: yup.string()
 });
 
-module.exports = (app, db) => {
+module.exports = (app, db, code_cache, recent_cache) => {
     const oidc = app.locals.oidc;
     const urls = db.get("urls");
+    const codes = db.get("codes");
+    const pushCode = promisify(code_cache.rpush).bind(code_cache);
+    const popCode = promisify(code_cache.lpop).bind(code_cache);
+    const setRecent = promisify(recent_cache.hmset).bind(recent_cache);
+    const getRecent = promisify(recent_cache.hgetall).bind(recent_cache);
+    const deleteRecent = promisify(recent_cache.del).bind(recent_cache);
+    
     urls.createIndex({code: 1}, {unique: true});
 
     app.get("/go/:code", async (req, res, next) => {
         const { code } = req.params;
     
         try {
-            const url = await urls.findOne({ code });
-            if (url) {
-                return res.redirect(url.url);
+            const recent = await getRecent(code);
+            console.log(recent);
+            if (recent){
+                await setRecent(code, "lastAccess", new Date());
+                return res.redirect(recent.url);
+            } else {
+                const url = await urls.findOne({ code });
+                if (url) {
+                    await setRecent(code, {
+                        "lastAccess": new Date(),
+                        "url": url.url
+                    });
+                    return res.redirect(url.url);
+                }
+                return res.redirect("/?error=Not found");
             }
-            return res.redirect("/?error=Not found");
         } catch(error) {
             next(error);
         }
@@ -32,7 +52,13 @@ module.exports = (app, db) => {
 
         try {
             if (!code){
-                code = nanoid(7);
+                const cached = await popCode("codes");
+                console.log(cached);
+                if (cached) {
+                    code = cached;
+                } else {
+                    code = nanoid(7);
+                }
             }
 
             await schema.validate({
@@ -61,6 +87,8 @@ module.exports = (app, db) => {
 
         try {
             const deleted = await urls.remove({ code, userId });
+            await deleteRecent(code);
+            await pushCode("codes", code);
             res.json(deleted);
         } catch (error) {
             next(error);
