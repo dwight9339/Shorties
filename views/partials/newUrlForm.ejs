@@ -11,18 +11,25 @@
                 <label for="code">Custom Code (Optional):</label>
                 <input class="form-control" type="text" name="code" id="code"/>
             </div>
-            <button type="submit" class="btn btn-dark">Create short url</button>
+            <button id="submitBtn" type="submit" class="btn btn-dark">
+                <span id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Create short url
+            </button>
         </form>
     </div>
 </div>
 <script>
     const form = document.querySelector("form");
+    $("#spinner").hide();
 
     form.addEventListener("submit", event => {
         event.preventDefault();
         const formData = new FormData(form);
         const url = formData.get("url");
         const code = formData.get("code");
+        $("form").hide();
+        $("#spinner").show();
+        $("#submitBtn").attr("disabled", true);
 
         fetch("/newurl", {
             method: "POST",
@@ -35,6 +42,9 @@
         .then(res => {
             if (res.ok){
                 form.reset();
+                $("form").show();
+                $("#spinner").hide();
+                $("#submitBtn").attr("disabled", false);
                 res.text().then(html => {
                     let newLi = document.createElement("li");
 

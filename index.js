@@ -16,20 +16,6 @@ const db = monk(process.env.MONGO_URI);
 const code_cache = redis.createClient(process.env.REDIS_CODE_URL);
 const recent_cache = redis.createClient(process.env.REDIS_RECENT_URL);
 
-code_cache.on("ready", err => {
-    if (err) console.log(err);
-
-    console.log("Code cache ready");
-    code_cache.flushdb();
-});
-
-recent_cache.on("ready", err => {
-    if (err) console.log(err);
-
-    console.log("Recent cache ready");
-    recent_cache.flushdb();
-});
-
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 

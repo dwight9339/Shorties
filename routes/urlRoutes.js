@@ -28,13 +28,11 @@ module.exports = (app, db, code_cache, recent_cache) => {
             const recent = await getRecent(code);
             console.log(recent);
             if (recent){
-                await setRecent(code, "lastAccess", new Date());
                 return res.redirect(recent.url);
             } else {
                 const url = await urls.findOne({ code });
                 if (url) {
                     await setRecent(code, {
-                        "lastAccess": new Date(),
                         "url": url.url
                     });
                     return res.redirect(url.url);
@@ -53,7 +51,6 @@ module.exports = (app, db, code_cache, recent_cache) => {
         try {
             if (!code){
                 const cached = await popCode("codes");
-                console.log(cached);
                 if (cached) {
                     code = cached;
                 } else {

@@ -1,11 +1,13 @@
 <li id="<%= url.code %>-li">
-    <div class="url card border-dark mb-3">
+    <div class="url card mb-3">
         <div class="container">
             <div class="row justify-content-md-center">
                 <div class="col-10">
                     <p class="card-text m-3">
-                        Short: https://shortiezzz.herokuapp.com/go/<%= url.code %><br />
-                        Original: <%= url.url %>
+                        <span class="font-weight-bold">Short:</span> <br />https://shortiezzz.herokuapp.com/go/<%= url.code %>
+                    </p>
+                    <p class="card-text m-3">
+                        <span class="font-weight-bold">Original:</span> <br /><%= url.url %>
                     </p>
                 </div>
                 <div class="col-2 align-self-end">
